@@ -1,0 +1,139 @@
+name : tacot
+pryolyzing : True
+state_model : virgin_char
+
+# -----------------------------------------------------------------------------
+# Basic Properties
+# -----------------------------------------------------------------------------
+
+density : {virgin : 280.0, 
+           char   : 220.0}
+heat_of_formation : {virgin : -8.571e5, 
+                     char   : 0.0}
+heat_of_fusion : {virgin : 0.0, 
+                  char   : 0.0}
+melting_temperature : {virgin : 5000.0, 
+                       char : 5000}
+
+# -----------------------------------------------------------------------------
+# Specific Heat
+# -----------------------------------------------------------------------------
+
+specific_heat :
+  dependent_variable : temperature
+  range : [255.6, 3333.0]
+  virgin :
+    polynomial : 
+      exponents : [-2, -1, 0, 1, 2, 3]
+      coefficients : [0.5682918e+8, 
+                      -0.5936664e+6,
+                      0.2303305e+4,
+                      0.140454,
+                      -0.1105065e-3,
+                      0.1730002e-7]
+  char :
+    polynomial : 
+      exponents : [-2, -1, 0, 1, 2, 3]
+      coefficients : [0.1178686e+9,
+                      -0.9421629e+6,
+                      0.2597063e+4,
+                      0.9011863e-1,
+                      -0.8695444e-4,
+                      0.1327878e-7]
+
+# -----------------------------------------------------------------------------
+# Thermal Conductivity
+# -----------------------------------------------------------------------------
+
+conductivity :
+  dependent_variable : temperature
+  range : [255.6, 3333.0]
+  orthotropic : False
+  virgin :
+    polynomial:
+      exponents : [-2, -1, 0, 1, 2, 3]
+      coefficients : [0.3200987e+5,
+                      -0.2619650e+3,
+                      0.1065257e+1,
+                      -0.5614886e-3,
+                      0.1841404e-6,
+                      0.4349287e-10]
+  char :
+    polynomial:
+      exponents : [-2, -1, 0, 1, 2, 3]
+      coefficients : [0.4593512e+5,
+                      -0.3451534e+3, 
+                      0.1177233e+1, 
+                      -0.5217403e-3, 
+                      9.9472775e-7,
+                      0.5207097e-10]
+
+# -----------------------------------------------------------------------------
+# Pyrolysis Model Properties
+# -----------------------------------------------------------------------------
+
+porosity :
+  dependent_variable : decomposition_fraction
+  tabular_data :
+    x : [0.0, 1.0]
+    y : [0.80, 0.85]
+
+permeability :
+  dependent_variable : decomposition_fraction
+  orthotropic : False
+  tabular_data :
+    x : [0.0, 1.0]
+    y : [1.6e-11, 2.0e-11]
+
+# -----------------------------------------------------------------------------
+# Decomposition / Pyrolysis Model
+# -----------------------------------------------------------------------------
+
+decomposition_model :
+  type : Arrhenius_three_component
+  components : [A, B, C]
+  A : 
+    initial_volume_fraction : 0.5
+    initial_density : 60.0
+    residual_density : 0.0
+    preexponential_factor : 1.2e+4
+    exponent : 3.0
+    temperature_exponent : 0.0
+    activation_temperature : 8555.56
+    minimum_reaction_temperature : 333.333
+
+  B : 
+    initial_volume_fraction : 0.5
+    initial_density : 180.0
+    residual_density : 120.0
+    preexponential_factor : 4.48e+9
+    exponent : 3.0
+    temperature_exponent : 0.0
+    activation_temperature : 20444.44
+    minimum_reaction_temperature : 555.5555
+
+  C : 
+    initial_volume_fraction : 0.5
+    initial_density : 320.0
+    residual_density : 320.0
+    preexponential_factor : 0.0
+    exponent : 0.0
+    temperature_exponent : 0.0
+    activation_temperature : 1.0
+    minimum_reaction_temperature : 999999.0
+
+# -----------------------------------------------------------------------------
+# Surface Properties
+# -----------------------------------------------------------------------------
+
+emissivity :
+  virgin :
+    constant : 0.8
+  char :
+    constant : 0.9
+
+absorptivity :
+  virgin :
+    constant : 0.8
+  char :
+    constant : 0.9

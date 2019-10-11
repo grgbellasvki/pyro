@@ -1,0 +1,6 @@
+[submodule "thirdparty/Mutationpp"]
+	path = thirdparty/Mutationpp
+	url = https://github.com/mutationpp/Mutationpp.git
+[submodule "thirdparty/Catch2"]
+	path = thirdparty/Catch2
+	url = https://github.com/catchorg/Catch2.git
