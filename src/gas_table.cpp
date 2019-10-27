@@ -7,17 +7,19 @@
 
 using namespace H5;
 
-namespace IcarusPyro { 
+namespace IcarusPyro {
 
-GasTable::GasTable(const std::string& pyrolysis_gas_mixture, const std::string& database) 
+GasTable::GasTable(
+    const std::string& pyrolysis_gas_mixture,
+    const std::string& database)
     : pyrolysis_gas(pyrolysis_gas_mixture)
 {
     H5std_string FILE_NAME(database);
     H5File* file(nullptr);
-    try { 
+    try {
         Exception::dontPrint();
         file = new H5File(FILE_NAME, H5F_ACC_RDONLY);
-    } catch (FileIException error) { 
+    } catch (FileIException error) {
         throw std::runtime_error("Could not open database.");
     }
     Group* gas = new Group(file->openGroup(pyrolysis_gas));
@@ -40,94 +42,95 @@ GasTable::GasTable(const std::string& pyrolysis_gas_mixture, const std::string& 
     delete file;
 }
 
-void GasTable::load(std::string varname, 
-                    std::string x_variable, 
-                    std::string y_variable,
-                    std::string x_scale, 
-                    std::string y_scale,
-                    std::vector<double>& x, 
-                    std::vector<double>& y, 
-                    std::vector<std::vector<double>>& z) 
+void GasTable::load(
+    std::string varname,
+    std::string x_variable,
+    std::string y_variable,
+    std::string x_scale,
+    std::string y_scale,
+    std::vector<double>& x,
+    std::vector<double>& y,
+    std::vector<std::vector<double>>& z)
 {
-    int nx = x.size();
-    int ny = y.size();
+    const int nx = x.size();
+    const int ny = y.size();
 
     TableEntry<double>* var(nullptr);
     if (varname == "cp") {
         cp = new TableEntry<double>(nx, ny, x_variable, y_variable, x_scale, y_scale);
         var = cp;
-    } else if (varname == "cv") { 
+    } else if (varname == "cv") {
         cv = new TableEntry<double>(nx, ny, x_variable, y_variable, x_scale, y_scale);
         var = cv;
-    } else if (varname == "internal_energy") { 
+    } else if (varname == "internal_energy") {
         eint = new TableEntry<double>(nx, ny, x_variable, y_variable, x_scale, y_scale);
         var = eint;
-    } else if (varname == "enthalpy") { 
+    } else if (varname == "enthalpy") {
         enthalpy = new TableEntry<double>(nx, ny, x_variable, y_variable, x_scale, y_scale);
         var = enthalpy;
-    } else if (varname == "molecular_weight") { 
+    } else if (varname == "molecular_weight") {
         mw = new TableEntry<double>(nx, ny, x_variable, y_variable, x_scale, y_scale);
         var = mw;
-    } else if (varname == "density") { 
+    } else if (varname == "density") {
         density = new TableEntry<double>(nx, ny, x_variable, y_variable, x_scale, y_scale);
         var = density;
-    } else if (varname == "viscosity") { 
+    } else if (varname == "viscosity") {
         viscosity = new TableEntry<double>(nx, ny, x_variable, y_variable, x_scale, y_scale);
         var = viscosity;
-    } else { 
+    } else {
         return;
     }
     // Copy data
-    for (int i = 0; i < nx; i++) { 
+    for (int i = 0; i < nx; i++) {
         var->x[i] = x[i];
     }
-    for (int i = 0; i < ny; i++) { 
+    for (int i = 0; i < ny; i++) {
         var->y[i] = y[i];
     }
-    for (int i = 0; i < var->ny; i++) {        
+    for (int i = 0; i < var->ny; i++) {
         for (int j = 0; j < var->nx; j++) {
             (*(*var).z)(j,i) = z[i][j];
         }
     }
 }
 
-void GasTable::write(std::string database, std::string gas_mixture_name) 
+void GasTable::write(const std::string& database, const std::string& gas_mixture_name)
 {
     std::string gas_name(pyrolysis_gas);
-    if (!(gas_mixture_name.empty())) { 
+    if (!(gas_mixture_name.empty())) {
         gas_name = gas_mixture_name;
-    } 
-    std::cout << "Writing database file : " << database 
-              << " for gas mixutre : " << gas_name << std::endl;
+    }
+    // std::cout << "Writing database file : " << database
+    //          << " for gas mixutre : " << gas_name << std::endl;
 
     H5std_string FILE_NAME(database);
     H5File* file(nullptr);
-    try { 
+    try {
         file = new H5File(FILE_NAME, H5F_ACC_TRUNC);
-    } catch (FileIException error) { 
+    } catch (FileIException error) {
         return;
     }
     Group* gas = new Group(file->createGroup(gas_name));
-    
-    std::cout << "   Writing cp data " << std::endl;
+
+    // std::cout << "   Writing cp data " << std::endl;
     if (cp) writeDataSet(gas, H5Names.cp, cp);
 
-    std::cout << "   Writing cv data " << std::endl;
+    // std::cout << "   Writing cv data " << std::endl;
     if (cv) writeDataSet(gas, H5Names.cv, cv);
 
-    std::cout << "   Writing internal energy data " << std::endl;
+    // std::cout << "   Writing internal energy data " << std::endl;
     if (eint) writeDataSet(gas, H5Names.internal_energy, eint);
-    
-    std::cout << "   Writing enthalpy data " << std::endl;
+
+    // std::cout << "   Writing enthalpy data " << std::endl;
     if (enthalpy) writeDataSet(gas, H5Names.enthalpy, enthalpy);
 
-    std::cout << "   Writing molecular weight data " << std::endl;
+    // std::cout << "   Writing molecular weight data " << std::endl;
     if (mw) writeDataSet(gas, H5Names.molecular_weight, mw);
 
-    std::cout << "   Writing density data " << std::endl;
+    // std::cout << "   Writing density data " << std::endl;
     if (density) writeDataSet(gas, H5Names.density, density);
 
-    std::cout << "   Writing viscosity data " << std::endl;
+    // std::cout << "   Writing viscosity data " << std::endl;
     if (viscosity) writeDataSet(gas, H5Names.viscosity, viscosity);
 
     delete gas;
@@ -147,7 +150,7 @@ void GasTable::writeDataSet(Group* gas, H5std_string &variable, TableEntry<doubl
     H5std_string buffer;
     StrType stype(PredType::C_S1, H5T_VARIABLE);
     stype.setCset(H5T_CSET_ASCII);
-    
+
     Group* group = new Group(gas->createGroup(variable));
 
     attr = Attribute(group->createAttribute(H5Names.nx, PredType::NATIVE_INT, attr_dataspace));

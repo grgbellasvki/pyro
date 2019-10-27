@@ -3,9 +3,9 @@
 
 /**
  * @file icuaruspyro.h
- * 
+ *
  * @brief Includes the header files for the IcarusPyro library.
- * 
+ *
  */
 
 #include "gas_table.h"

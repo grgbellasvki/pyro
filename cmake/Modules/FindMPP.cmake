@@ -4,8 +4,8 @@
 # how this library is found by CMake.
 # --
 
-set(mpp_include_dir "$ENV{MPP_ROOT}/include")
-set(mpp_library_dir "$ENV{MPP_ROOT}/lib")
+set(mpp_include_dir "$ENV{MPP_DIRECTORY}/install/include")
+set(mpp_library_dir "$ENV{MPP_DIRECTORY}/install/lib")
 
 find_path(Mutation_INCLUDE_DIR
   NAMES mutation++.h
@@ -13,8 +13,8 @@ find_path(Mutation_INCLUDE_DIR
   NO_DEFAULT_PATH
 )
 if ("${Mutation_INCLUDE_DIR}" STREQUAL "Mutation_INCLUDE_DIR-NOTFOUND")
-  message("Set the environment variable MPP_ROOT")
-  message("$ENV{MPP_ROOT}")
+  message("Set the environment variable MPP_DIRECTORY")
+  message("$ENV{MPP_DIRECTORY}")
   message(FATAL_ERROR "Could not find the Mutation++ library.")
 endif()
 

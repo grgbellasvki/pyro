@@ -19,7 +19,7 @@ cmake_policy(SET CMP0074 NEW)
 # Set path to CMake modules, macros, and functions
 # --
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules)
+# list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules)
 
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
@@ -85,12 +85,22 @@ find_package(Eigen3 3.3 REQUIRED NO_MODULE)
 
 # Mutation++ : find_package() will set the include and library directoies
 # --
-find_package(MPP REQUIRED)
-add_library(Mutation INTERFACE)
-set_target_properties(Mutation PROPERTIES
-    INTERFACE_INCLUDE_DIRECTORIES "${Mutation_INCLUDE_DIRS}"
-    INTERFACE_LINK_LIBRARIES "${Mutation_LIBRARIES}"
-)
+# find_package(mutation++ REQUIRED)
+# add_library(mutation++ INTERFACE)
+# set_target_properties(mutation++ PROPERTIES
+#     INTERFACE_INCLUDE_DIRECTORIES "$ENV{MPP_DIRECTORY}/install/include"
+#     INTERFACE_LINK_LIBRARIES "${mutation++_LIBRARIES}"
+# )
+
+if(NOT TARGET mutation++)
+    find_package(mutation++ REQUIRED)
+endif()
+# set_target_properties(mutation++ PROPERTIES
+#     INTERFACE_INCLUDE_DIRECTORIES "$ENV{MPP_DIRECTORY}/install/include/"
+#     INTERFACE_LINK_LIBRARIES "${mutation++_LIBRARIES}"
+# )
+include_directories("$ENV{MPP_DIRECTORY}/build/install/include/mutation++")
+link_directories("$ENV{MPP_DIRECTORY}/build/install/lib")
 
 # HDF5
 # --
@@ -132,7 +142,7 @@ set_target_properties(pyro_lib
 # --
 target_link_libraries(pyro_lib
   PRIVATE
-     Mutation
+     mutation++
      Eigen3::Eigen
      hdf5
 )
@@ -168,7 +178,7 @@ target_include_directories(pyro
 target_link_libraries(pyro
   PRIVATE
      Catch2::Catch2
-     Mutation
+     mutation++
      Eigen3::Eigen
      hdf5
   PUBLIC
@@ -188,7 +198,7 @@ set_target_properties(pyro_test
 target_link_libraries(pyro_test
   PRIVATE
      Catch2::Catch2
-     Mutation
+     mutation++
      Eigen3::Eigen
      hdf5
   PUBLIC
